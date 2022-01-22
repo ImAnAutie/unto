@@ -1,0 +1,16 @@
+{
+  "name": "unto",
+  "version": "1.0.0",
+  "description": "Into onto",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Gregory oakley-Stevenson <gregory@okonetwork.org.uk>",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.10",
+    "csv-writer": "^1.6.0",
+    "node-fetch": "^2.6.6"
+  }
+}
