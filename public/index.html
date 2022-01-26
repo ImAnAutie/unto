@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>UnTo!</title>
+
+    <style media="screen">
+      body {
+        background: #eceff1;
+        color: rgba(0, 0, 0, 0.87);
+        font-family: Roboto, Helvetica, Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      .page {
+        background: white;
+        margin: 100px auto 16px;
+        padding: 32px 24px;
+        border-radius: 3px;
+      }
+      .page h2 {
+        color: #ffa100;
+        font-weight: bold;
+        font-size: 16px;
+        margin: 0 0 8px;
+      }
+      .page h1 {
+        font-size: 22px;
+        font-weight: 300;
+        color: rgba(0, 0, 0, 0.6);
+        margin: 0 0 16px;
+      }
+      .page p {
+        line-height: 140%;
+        margin: 16px 0 24px;
+        font-size: 14px;
+      }
+      .page button {
+        display: block;
+        text-align: center;
+        background: #039be5;
+        text-transform: uppercase;
+        text-decoration: none;
+        color: white;
+        padding: 16px;
+        border-radius: 4px;
+      }
+      .page,
+      .page a {
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+      }
+      .page {
+        color: rgba(0, 0, 0, 0.4);
+        text-align: center;
+        font-size: 13px;
+      }
+      @media (max-width: 600px) {
+        body,
+        .page {
+          margin-top: 0;
+          background: white;
+          box-shadow: none;
+        }
+        body {
+          border-top: 16px solid #ffa100;
+        }
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <link
+      rel="stylesheet"
+      href="//cdn.datatables.net/1.11.4/css/jquery.dataTables.min.css"
+    />
+    <script src="//cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+  </head>
+  <body>
+    <div class="page" id="pageLookup">
+      <h2>Welcome to UnTo!</h2>
+      <h1>Enter your postcode</h1>
+
+      <div class="form-group">
+        <label for="postcode">Post code</label>
+        <input
+          type="text"
+          class="form-control"
+          id="postcode"
+          placeholder="Enter postcode with a space in the middle"
+        />
+      </div>
+
+      <button onclick="lookupCars();">Find my car</button>
+    </div>
+    <div class="page" id="pageResults" style="display: none">
+      <h2>Here are your results!</h2>
+
+      <table id="resultsTable" class="display" style="width: 100%">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Trim</th>
+            <th>Colour</th>
+            <th>Date</th>
+            <th>Price</th>
+            <th>joinLink</th>
+          </tr>
+        </thead>
+        <tfoot>
+          <tr>
+            <th>Name</th>
+            <th>Trim</th>
+            <th>Colour</th>
+            <th>Date</th>
+            <th>Price</th>
+            <th>JoinLink</th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <p id="load">UnTo</p>
+
+    <script>
+      const lookupCars = async function () {
+        const postcode = $("#postcode").val();
+        try {
+          swal({
+            title: `Searching`,
+            text: "Just a moment!",
+            icon: "info",
+            buttons: {},
+          });
+          const carsRes = await fetch(
+            `https://us-central1-evsub-236ec.cloudfunctions.net/searchPostcode?postcode=${encodeURIComponent(postcode)}`
+          );
+          const carsJson = await carsRes.json();
+          console.log(carsJson);
+          swal.close();
+          if (carsJson.status) {
+            //@todo show cars data
+            $("#pageLookup").hide();
+            $("#pageResults").show();
+            const resultsTableDT = $("#resultsTable").DataTable({
+              order: [[4, "asc"]],
+              data: carsJson.results,
+              columns: [
+                { data: "name" },
+                { data: "trim" },
+                { data: "colour" },
+                { data: "date" },
+                { data: "price" },
+                { data: "joinLink", visible: false },
+              ],
+            });
+            $("#resultsTable tbody").on("click", "tr", async function () {
+              const selectedCar = resultsTableDT.row(this).data();
+              console.log(selectedCar);
+
+              const confirmClicked = await swal({
+                title: `${selectedCar.name} ${selectedCar.trim}- ${selectedCar.colour} £${selectedCar.price}`,
+                text: "Enter 5935f at checkout for £50 off your first month's subscription",
+                icon: "info",
+                buttons: {
+                  cancel: {
+                    text: "Cancel",
+                    value: false,
+                    visible: true,
+                    className: "btn btn-primary",
+                    closeModal: true,
+                  },
+                  confirm: {
+                    text: "Continue",
+                    value: true,
+                    visible: true,
+                    className: "btn btn-success",
+                    closeModal: true,
+                  },
+                },
+              });
+
+              if (confirmClicked) {
+                try {
+                  const clickLogRes = await fetch(
+                    `https://us-central1-evsub-236ec.cloudfunctions.net/logClick?slug=${
+                      selectedCar.slug
+                    }&colour=${encodeURIComponent(selectedCar.colour)}`
+                  );
+                  const clickLogJson = await clickLogRes.json();
+                  console.log(clickLogJson);
+                } catch (error) {
+                  console.log(error);
+                }
+                window.location.href = selectedCar.joinLink;
+              }
+            });
+          } else {
+            swal({
+              title: `Something went wrong`,
+              text: carsResult.message,
+              icon: "error",
+              buttons: {
+                cancel: {
+                  text: "Close",
+                  value: true,
+                  visible: true,
+                  className: "btn btn-secondary",
+                  closeModal: true,
+                },
+              },
+            });
+          }
+        } catch (apiError) {
+          console.log(apiError);
+          swal({
+            title: `Something went wrong`,
+            text: "UnTo experienced an API error. Please try again later.",
+            icon: "error",
+            buttons: {
+              cancel: {
+                text: "Close",
+                value: true,
+                visible: true,
+                className: "btn btn-secondary",
+                closeModal: true,
+              },
+            },
+          });
+        }
+      };
+    </script>
+  </body>
+</html>

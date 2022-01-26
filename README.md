@@ -2,5 +2,4 @@
 Onto car availability tool
 
 
-To use do a quick npm install then node index.js "POST CODE"
-The quotes and space are important", output will be in output/POSTCODE.CSV
+For the former standalone tool that used to live here please see <https://github.com/ImAnAutie/unto/tree/13c28cac280f0fc20251a2911b20883dcf1f6cc0>
