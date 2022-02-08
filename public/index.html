@@ -88,7 +88,20 @@
     <script src="//cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
   </head>
   <body>
-    <div class="page" id="pageLookup">
+    <div class="page" id="pageSplash">
+      <h2>Welcome to UnTo!</h2>
+      <h1>This tool shows you instant availablility of vehicles from ONTO's all inclusive car subscription service</h1>
+      <p>Just enter your postcode on the next page and it will generate a list of vehicles that are available to order for delivery to your home or office.</p>
+      <p>If you click on the vehicle that you would like to order from the list, it will direct you to the ONTO order page with your choice pre-selected on the order form.</p>
+      <br />
+      <p>You can also get £50 off your first monthly subscription by entering promo code "5935f" on the ONTO registration form</p>
+      <br />
+      <p>To get started, just click the button below to load the tool.</p>
+      <div class="d-flex justify-content-center">
+        <button onclick="switchToLookup();">Find my car</button>
+      </div>
+    </div>
+    <div class="page" id="pageLookup" style="display:none;">
       <h2>Welcome to UnTo!</h2>
       <h1>Enter your postcode</h1>
 
@@ -102,7 +115,9 @@
         />
       </div>
 
-      <button onclick="lookupCars();">Find my car</button>
+      <div class="d-flex justify-content-center">
+        <button onclick="lookupCars();">Find my car</button>
+      </div>
     </div>
     <div class="page" id="pageResults" style="display: none">
       <h2>Here are your results!</h2>
@@ -130,8 +145,18 @@
         </tfoot>
       </table>
     </div>
-    <p id="load">UnTo</p>
+    <p id="load">UnTo - 
+      <a href="https://github.com/ImAnAutie/unto">See us on github!</a> 
+      Email the dev <a href="mailto:gregory@okonetwork.org.uk?subject=UnTo!">gregory@okonetwork.org.uk</a> 
+    
+    </p>
 
+    <script>
+      const switchToLookup = function() {
+        $("#pageSplash").hide();
+        $("#pageLookup").show();
+      };
+    </script>
     <script>
       const lookupCars = async function () {
         const postcode = $("#postcode").val();
