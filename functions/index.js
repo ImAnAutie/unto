@@ -139,6 +139,7 @@ const getModel = async function(modelSlug) {
   model.trim = prismicCar.trim;
   model.price = prismicCar.price;
   model.images = prismicCar.image_gallery.map((imgData) => imgData.image.url);
+  model.slug = modelSlug;
   return model;
 };
 
@@ -189,13 +190,13 @@ async function deleteQueryBatch(db, query, resolve) {
   });
 }
 exports.updateModels = functions.https.onRequest(async function(req, res) {
-  /* if (req.query.adminKey !== functions.config().unto.admin) {
+  if (req.query.adminKey !== functions.config().unto.admin) {
     return res.status(403).send({
 
       status: false,
       message: "Invalid admin key",
     });
-  } */
+  }
 
 
   const modelListRes = await fetch("https://on.to/electric-cars");
